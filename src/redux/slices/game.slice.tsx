@@ -23,7 +23,7 @@ export const gameSlice = createSlice({
             state.board = faceValues.map((i) => ({
                 faceValue: i,
                 isMatched: false,
-                isOpen: true
+                isOpen: false
             } as Card));
 
             state.inGame = true;

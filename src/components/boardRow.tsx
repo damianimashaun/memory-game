@@ -27,17 +27,11 @@ export default function BoardRow(props) {
 
     console.log('> ', data, '\n');
 
-    const renderCell = (card: Card) => <GameCell card={card} />;
-
-    const renderCells = () => {
-        for (let i = 0; i < rowCount; i++) {
-            renderCell(data[i]);
-        }
-    };
+    const renderCell = (card: Card, i: number) => <GameCell key={i} card={card} />;
 
     return (
         <View style={styles.rowContainer}>
-            {data.map((d) => renderCell(d))}
+            {data.map((d, i) => renderCell(d, i))}
             {/* {renderCells()} */}
         </View>
     );

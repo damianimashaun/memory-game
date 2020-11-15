@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
 import determineColumnByRow from '../redux/slices/utility/grouper';
 import { layBoard } from '../redux/slices/game.slice';
@@ -34,11 +34,15 @@ function Board({ game, layBoard }) {
     }
 
     return (
-        <View style={styles.container}>
-            {dataBreaks.map((data) => {
-                return <BoardRow rowCount={columns} data={data} />
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainerStyle}>
+            {dataBreaks.map((data, i) => {
+                return (
+                    <BoardRow key={i} rowCount={columns} data={data} />
+                )
             })}
-        </View>
+        </ScrollView>
     );
 }
 
@@ -46,8 +50,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    contentContainerStyle: {
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: 10
     },
     inner: {
         flex: 1
