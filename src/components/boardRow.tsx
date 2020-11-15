@@ -58,6 +58,7 @@ export default function BoardRow(props) {
 const styles = StyleSheet.create({
     rowContainer: {
         flex: 1,
+        flexDirection: 'row',
         minHeight: 100
     }
 });
