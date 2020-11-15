@@ -4,9 +4,9 @@ import {
 } from "react-native";
 import { connect } from 'react-redux'
 import { Card } from "../models/card";
-import { toggleButton } from '../redux/slices/game.slice';
+import { toggleButtonAsync } from '../redux/slices/game.slice';
 
-function GameCell({ card, toggleButton }) {
+function GameCell({ card, toggleButtonAsync }) {
     const hasCard = card !== undefined;
 
     return (
@@ -21,7 +21,7 @@ function GameCell({ card, toggleButton }) {
                         </Text>}
                         {!card.isOpen &&
                             <TouchableOpacity
-                                onPress={() => toggleButton(card.id)}
+                                onPress={() => toggleButtonAsync(card.id)}
                                 style={styles.centeredButton} />}
                     </View>
                 )}
@@ -55,7 +55,7 @@ const mapStateToProps = (state, ownProps) => ({
     card: ownProps.card
 });
 
-const mapDispatchToProps = { toggleButton };
+const mapDispatchToProps = { toggleButtonAsync };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameCell);
 

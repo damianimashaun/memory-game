@@ -6,7 +6,6 @@ import GameCell from './cell';
 export default function BoardRow(props) {
     let { data, rowCount } = props;
     const dataCount = data.length;
-    console.log('> Datacount ', dataCount, '<<>>', rowCount, '\n');
 
     if (dataCount < rowCount) {
         const difference = rowCount - dataCount;
