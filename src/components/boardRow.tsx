@@ -18,14 +18,14 @@ export default function BoardRow(props) {
             data = [...data, undefined];
         }
 
-        for (let i = 0; i < perSide; i++) {
-            toAppend.push(undefined);
+        if (difference > 1) {
+            for (let i = 0; i < perSide; i++) {
+                toAppend.push(undefined);
+            }
         }
 
         data = [...toAppend, ...data, ...toAppend];
     }
-
-    console.log('> ', data, '\n');
 
     const renderCell = (card: Card, i: number) => <GameCell key={i} card={card} />;
 

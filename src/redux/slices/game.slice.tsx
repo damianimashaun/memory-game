@@ -7,7 +7,7 @@ const emptyBoard: Card[] = [];
 export const gameSlice = createSlice({
     name: 'game',
     initialState: {
-        level: 3,
+        level: 10,
         score: 0,
         board: emptyBoard,
         inGame: false
