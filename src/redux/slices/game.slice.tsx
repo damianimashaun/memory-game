@@ -4,86 +4,107 @@ import { getShuffledArray } from "./utility/shuffle";
 
 const emptyBoard: Card[] = [];
 const negativeOne = -1;
+const maxLevel = 10;
+
+const defaultPlayState = (max: number) => ({
+    oneUp: false,
+    currentFace: negativeOne,
+    matches: 0,
+    max
+});
+
+const makeCells = (level: number) => {
+    const values = getShuffledArray(level);
+    let index = 0;
+
+    return values.map((i) => {
+        index++;
+
+        return ({
+            faceValue: i,
+            isMatched: false,
+            isOpen: false,
+            id: index
+        } as Card);
+    });
+};
+
+const defaultState = {
+    level: 1,
+    score: 0,
+    board: emptyBoard,
+    inGame: false,
+    play: defaultPlayState(0),
+    isComplete: false
+};
+
+const progressState = (state: any, level: number) => {
+    state.level = level;
+    state.board = makeCells(level);
+    state.play = defaultPlayState(level + 1);
+};
 
 export const gameSlice = createSlice({
     name: 'game',
-    initialState: {
-        level: 10,
-        score: 0,
-        board: emptyBoard,
-        inGame: false,
-        play: {
-            oneUp: false,
-            currentFace: negativeOne,
-            matches: 0
-        }
-    },
+    initialState: defaultState,
     reducers: {
         toggleCard: (state, action) => {
 
         },
         layBoard: (state) => {
             const { level } = state;
-            const faceValues = getShuffledArray(level);
 
-            let index = 0;
-            state.board = faceValues.map((i) => {
-                index++;
-
-                return ({
-                    faceValue: i,
-                    isMatched: false,
-                    isOpen: false,
-                    id: index
-                } as Card);
-            });
-
+            state.board = makeCells(level);
+            state.play = defaultPlayState(level + 1);
             state.inGame = true;
         },
         flipCell: (state, action) => {
-            const { board } = state;
-            const card = board.find((item) => item.id === action.payload);
+            const card = state.board.find((item) => item.id === action.payload);
             card.isOpen = true;
         },
         toggleButton: (state, action) => {
-            const { play, board } = state;
-            console.log('Play >>', play.matches);
+            const { play, board, level } = state;
+
+            const setPlayState = (up = false, face = negativeOne) => {
+                state.play.oneUp = up;
+                state.play.currentFace = face;
+            };
+
+            const progressLevel = () => {
+                const newLevel = level + 1;
+
+                if (newLevel > maxLevel) {
+                    state.isComplete = true;
+                } else {
+                    progressState(state, newLevel);
+                }
+            };
 
             const card = board.find((item) => item.id === action.payload);
-            //card.isOpen = true;
 
             if (!play.oneUp) {
-                //card.isOpen = true;
-
-                state.play.oneUp = true;
-                state.play.currentFace = card.id;
+                setPlayState(true, card.id);
                 return;
             }
 
             const openCard = board.find((item) => item.id === play.currentFace);
-            //console.log('Open Face', openCard);
-
 
             if (openCard.faceValue === card.faceValue) {
-                openCard.isOpen = true;
-
                 const matches = ++play.matches;
+                console.log('Matches >> ', matches, matches === play.max);
 
-                state.play = {
-                    oneUp: false,
-                    currentFace: negativeOne,
-                    matches
-                };
+                setPlayState();
+                state.play.matches = matches;
+                if (matches === play.max) {
+                    progressLevel();
+                }
                 return;
             }
 
             openCard.isOpen = false;
-            //setTimeout(() => {
             card.isOpen = false;
-            //}, 400);
 
-            state.play.oneUp = false;
-            state.play.currentFace = negativeOne;
+            setPlayState();
         }
     }
 });
