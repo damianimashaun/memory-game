@@ -36,7 +36,9 @@
                     ".ts"
                 ]
             }
-        ]
+        ],
+        "comma-dangle": "off",
+        "allowForLoopAfterthoughts": "off"
     },
     "settings": {
         "import/resolver": {
