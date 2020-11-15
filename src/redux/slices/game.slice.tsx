@@ -7,7 +7,7 @@ const emptyBoard: Card[] = [];
 export const gameSlice = createSlice({
     name: 'game',
     initialState: {
-        level: 10,
+        level: 3,
         score: 0,
         board: emptyBoard,
         inGame: false
@@ -20,17 +20,28 @@ export const gameSlice = createSlice({
             const { level } = state;
             const faceValues = getShuffledArray(level);
 
-            state.board = faceValues.map((i) => ({
-                faceValue: i,
-                isMatched: false,
-                isOpen: false
-            } as Card));
+            let index = 0;
+            state.board = faceValues.map((i) => {
+                index++;
+
+                return ({
+                    faceValue: i,
+                    isMatched: false,
+                    isOpen: false,
+                    id: index
+                } as Card);
+            });
 
             state.inGame = true;
+        },
+        toggleButton: (state, action) => {
+            console.log('Toggle >>> ', action);
+            const card = state.board.find((item) => item.id === action.payload);
+            card.isOpen = true;
         }
     }
 });
 
-export const { toggleCard, layBoard } = gameSlice.actions;
+export const { toggleCard, layBoard, toggleButton } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+    StyleSheet, View, Text, TouchableOpacity
+} from "react-native";
+import { connect } from 'react-redux'
 import { Card } from "../models/card";
+import { toggleButton } from '../redux/slices/game.slice';
 
-export function GameCell(props) {
-    const card: Card = props.card;
+function GameCell({ card, toggleButton }) {
     const hasCard = card !== undefined;
 
     return (
@@ -16,7 +19,10 @@ export function GameCell(props) {
                         {card.isOpen && <Text style={styles.centeredText}>
                             {card.faceValue}
                         </Text>}
-                        {!card.isOpen && <TouchableOpacity style={styles.centeredButton} />}
+                        {!card.isOpen &&
+                            <TouchableOpacity
+                                onPress={() => toggleButton(card.id)}
+                                style={styles.centeredButton} />}
                     </View>
                 )}
         </View>
@@ -43,3 +49,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'green'
     }
 });
+
+
+const mapStateToProps = (state, ownProps) => ({
+    card: ownProps.card
+});
+
+const mapDispatchToProps = { toggleButton };
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameCell);
+

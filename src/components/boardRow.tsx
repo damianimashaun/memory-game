@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Card } from '../models/card';
-import { GameCell } from './cell';
+import GameCell from './cell';
 
 export default function BoardRow(props) {
     let { data, rowCount } = props;

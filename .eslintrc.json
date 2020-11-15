@@ -38,7 +38,7 @@
             }
         ],
         "comma-dangle": "off",
-        "allowForLoopAfterthoughts": "off"
+        "allowForLoopAfterthoughts": 1
     },
     "settings": {
         "import/resolver": {
