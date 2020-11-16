@@ -7,7 +7,7 @@ import formatTime from "./utility/timeFunctions";
 const emptyBoard: Card[] = [];
 const negativeOne = -1;
 const maxLevel = 10;
-const maxTime = 6000;
+const maxTime = 30000;
 
 const defaultPlayState = (max: number) => ({
     oneUp: false,
@@ -24,7 +24,7 @@ const defaultState = (level: number) => ({
     play: defaultPlayState(level + 1),
     isComplete: false, // false
     isTimeOut: false,
-    milliseconds: 0, // 1200,
+    milliseconds: maxTime, // 1200,
     time: ''
 });
 
@@ -60,7 +60,7 @@ export const gameSlice = createSlice({
             state.score = 0;
             state.isComplete = false;
             state.isTimeOut = false;
-            state.milliseconds = 0;
+            state.milliseconds = maxTime;
             state.time = '';
             state.play = defaultPlayState(2);
             state.board = makeCells(1);
@@ -89,7 +89,7 @@ export const gameSlice = createSlice({
             const progressLevel = () => {
                 const newLevel = level + 1;
 
-                if (newLevel > 1) {
+                if (newLevel > 3) {
                     state.isComplete = true;
                     state.inGame = false;
                 } else {
@@ -125,13 +125,13 @@ export const gameSlice = createSlice({
             setPlayState();
         },
         tick: (state) => {
-            const milliseconds = +state.milliseconds + 1;
-            if (milliseconds === 1000) {
+            const milliseconds = +state.milliseconds - 1;
+            if (milliseconds === 0) {
                 state.isTimeOut = true;
                 state.inGame = false;
                 return;
             }
-            
+
             state.milliseconds = milliseconds;
             state.time = formatTime(milliseconds);
         }
