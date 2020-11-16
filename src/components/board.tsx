@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import determineColumnByRow from '../redux/slices/utility/grouper';
 import { layBoard } from '../redux/slices/game.slice';
 import BoardRow from './boardRow';
+import Scoreboard from './score';
 
 function Board({ game, layBoard }) {
     const {
@@ -34,15 +35,17 @@ function Board({ game, layBoard }) {
     }
 
     return (
-        <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.contentContainerStyle}>
-            {dataBreaks.map((data, i) => {
-                return (
-                    <BoardRow key={i} rowCount={columns} data={data} />
-                )
-            })}
-        </ScrollView>
+        <View style={styles.container}>
+            <Scoreboard />
+            <View style={styles.cellContainer}
+                contentContainerStyle={styles.cellContainer}>
+                {dataBreaks.map((data, i) => {
+                    return (
+                        <BoardRow key={i} rowCount={columns} data={data} />
+                    )
+                })}
+            </View>
+        </View>
     );
 }
 
@@ -50,14 +53,21 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-    },
-    contentContainerStyle: {
+        marginTop: 10,
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 10
     },
-    inner: {
-        flex: 1
+    contentContainerStyle: {
+    },
+    cellContainer: {
+        flex: 1,
+        width: '100%',
+        marginBottom: 10
+    },
+    flexOne: {
+        flex: 1,
+        width: '100%'
     }
 });
 

@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
     rowContainer: {
         flex: 1,
         flexDirection: 'row',
-        minHeight: 100
+        minHeight: 50
     }
 });

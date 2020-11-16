@@ -38,7 +38,8 @@
             }
         ],
         "comma-dangle": "off",
-        "allowForLoopAfterthoughts": 1
+        "allowForLoopAfterthoughts": 1,
+        "react/jsx-indent" : ["error", 4]
     },
     "settings": {
         "import/resolver": {

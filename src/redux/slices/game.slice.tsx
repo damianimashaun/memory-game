@@ -1,10 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { State } from "react-native-gesture-handler";
 import { Card } from "../../models/card";
 import { getShuffledArray } from "./utility/shuffle";
+import formatTime from "./utility/timeFunctions";
 
 const emptyBoard: Card[] = [];
 const negativeOne = -1;
 const maxLevel = 10;
+const maxTime = 6000;
 
 const defaultPlayState = (max: number) => ({
     oneUp: false,
@@ -12,6 +15,18 @@ const defaultPlayState = (max: number) => ({
     matches: 0,
     max
 });
+
+const defaultState = {
+    level: 1,
+    score: 0,
+    board: emptyBoard,
+    inGame: false,
+    play: defaultPlayState(0),
+    isComplete: false,
+    isTimeOut: false,
+    milliseconds: 0,
+    time: ''
+};
 
 const makeCells = (level: number) => {
     const values = getShuffledArray(level);
@@ -29,15 +44,6 @@ const makeCells = (level: number) => {
     });
 };
 
-const defaultState = {
-    level: 1,
-    score: 0,
-    board: emptyBoard,
-    inGame: false,
-    play: defaultPlayState(0),
-    isComplete: false
-};
-
 const progressState = (state: any, level: number) => {
     state.level = level;
     state.board = makeCells(level);
@@ -48,9 +54,6 @@ export const gameSlice = createSlice({
     name: 'game',
     initialState: defaultState,
     reducers: {
-        toggleCard: (state, action) => {
-
-        },
         layBoard: (state) => {
             const { level } = state;
 
@@ -63,7 +66,7 @@ export const gameSlice = createSlice({
             card.isOpen = true;
         },
         toggleButton: (state, action) => {
-            const { play, board, level } = state;
+            const { play, board, level, score } = state;
 
             const setPlayState = (up = false, face = negativeOne) => {
                 state.play.oneUp = up;
@@ -94,6 +97,7 @@ export const gameSlice = createSlice({
                 console.log('Matches >> ', matches, matches === play.max);
 
                 setPlayState();
+                state.score = score + (level * 10);
                 state.play.matches = matches;
                 if (matches === play.max) {
                     progressLevel();
@@ -105,11 +109,22 @@ export const gameSlice = createSlice({
             card.isOpen = false;
 
             setPlayState();
+        },
+        tick: (state) => {
+            const milliseconds = +state.milliseconds + 1;
+            if (milliseconds === maxTime) {
+                state.isTimeOut = true;
+                return;
+            }
+            state.milliseconds = milliseconds;
+            state.time = formatTime(milliseconds);
         }
     }
 });
 
-export const { toggleCard, layBoard, toggleButton, flipCell } = gameSlice.actions;
+export const {
+    layBoard, toggleButton, flipCell, tick
+} = gameSlice.actions;
 
 export const toggleButtonAsync = (id) => (dispatch) => {
     dispatch(flipCell(id));
