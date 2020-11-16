@@ -39,7 +39,24 @@
         ],
         "comma-dangle": "off",
         "no-plusplus": "off",
-        "react/jsx-indent" : ["error", 4]
+        "react/jsx-indent": [
+            "error",
+            4
+        ],
+        "react/jsx-indent-props": [
+            "error",
+            4
+        ],
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
+            }
+        ]
     },
     "settings": {
         "import/resolver": {

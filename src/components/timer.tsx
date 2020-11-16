@@ -4,19 +4,42 @@ import { connect } from 'react-redux';
 import { tick } from '../redux/slices/game.slice';
 
 class Timer extends Component {
-    constructor(props) {
-        super(props);
-        this.interval = null;
-    }
+    intervalId = 0;
 
     componentDidMount = () => {
-        this.interval = setInterval(() => {
+        this.start();
+    }
+
+    componentDidUpdate = (prevPops) => {
+        const { inGame, isComplete, isTimeOut } = this.props;
+        console.log('> ', inGame, isComplete, isTimeOut);
+        const gameStarted = !prevPops.inGame && inGame;
+        const gameComplete = !prevPops.isComplete && isComplete;
+        const timeOut = !prevPops.isTimeout && isTimeOut;
+
+        if (gameStarted) {
+            this.start();
+        } else if (gameComplete || timeOut) {
+            this.stop();
+        }
+    }
+
+    start = () => {
+        this.intervalId = setInterval(() => {
             this.props.tick();
         }, 1);
     }
 
+    stop = () => {
+        clearInterval(this.intervalId);
+    }
+
+    componentWillUnmount = () => {
+        this.stop();
+    }
+
     render = () => (
-        <View styles={styles.flexOne}>
+        <View style={styles.flexOne}>
             <Text style={styles.text}>
                 {this.props.time}
             </Text>
@@ -37,9 +60,14 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = { tick };
 
-const mapStateToProps = (state) => ({
-    inGame: state.game.inGame,
-    time: state.game.time
-});
+const mapStateToProps = (state: any) => {
+    const {
+        inGame, isComplete, time, isTimeOut
+    } = state.game;
+
+    return {
+        inGame, isComplete, isTimeOut, time
+    };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Timer);

@@ -16,17 +16,17 @@ const defaultPlayState = (max: number) => ({
     max
 });
 
-const defaultState = {
-    level: 1,
-    score: 0,
+const defaultState = (level: number) => ({
+    level,
+    score: 0, // 0,
     board: emptyBoard,
     inGame: false,
-    play: defaultPlayState(0),
-    isComplete: false,
+    play: defaultPlayState(level + 1),
+    isComplete: false, // false
     isTimeOut: false,
-    milliseconds: 0,
+    milliseconds: 0, // 1200,
     time: ''
-};
+});
 
 const makeCells = (level: number) => {
     const values = getShuffledArray(level);
@@ -52,8 +52,21 @@ const progressState = (state: any, level: number) => {
 
 export const gameSlice = createSlice({
     name: 'game',
-    initialState: defaultState,
+    initialState: defaultState(1),
     reducers: {
+        restartGame: (state) => {
+            console.log('here and now');
+            state.level = 1;
+            state.score = 0;
+            state.isComplete = false;
+            state.isTimeOut = false;
+            state.milliseconds = 0;
+            state.time = '';
+            state.play = defaultPlayState(2);
+            state.board = makeCells(1);
+
+            state.inGame = true;
+        },
         layBoard: (state) => {
             const { level } = state;
 
@@ -76,8 +89,9 @@ export const gameSlice = createSlice({
             const progressLevel = () => {
                 const newLevel = level + 1;
 
-                if (newLevel > maxLevel) {
+                if (newLevel > 1) {
                     state.isComplete = true;
+                    state.inGame = false;
                 } else {
                     progressState(state, newLevel);
                 }
@@ -94,7 +108,6 @@ export const gameSlice = createSlice({
 
             if (openCard.faceValue === card.faceValue) {
                 const matches = ++play.matches;
-                console.log('Matches >> ', matches, matches === play.max);
 
                 setPlayState();
                 state.score = score + (level * 10);
@@ -102,6 +115,7 @@ export const gameSlice = createSlice({
                 if (matches === play.max) {
                     progressLevel();
                 }
+
                 return;
             }
 
@@ -112,10 +126,12 @@ export const gameSlice = createSlice({
         },
         tick: (state) => {
             const milliseconds = +state.milliseconds + 1;
-            if (milliseconds === maxTime) {
+            if (milliseconds === 1000) {
                 state.isTimeOut = true;
+                state.inGame = false;
                 return;
             }
+            
             state.milliseconds = milliseconds;
             state.time = formatTime(milliseconds);
         }
@@ -123,7 +139,7 @@ export const gameSlice = createSlice({
 });
 
 export const {
-    layBoard, toggleButton, flipCell, tick
+    layBoard, toggleButton, flipCell, tick, restartGame
 } = gameSlice.actions;
 
 export const toggleButtonAsync = (id) => (dispatch) => {

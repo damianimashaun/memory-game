@@ -1,30 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import determineColumnByRow from '../redux/slices/utility/grouper';
 import { layBoard } from '../redux/slices/game.slice';
 import BoardRow from './boardRow';
 import Scoreboard from './score';
+import styles from './board.styles';
+import GameOver from './gameOver';
 
-function Board({ game, layBoard }) {
-    const {
-        level,
-        board,
-        score,
-        inGame
-    } = game;
-
-    if (!inGame) {
-        layBoard();
-        return null;
+const groupData = (level: number, dimensions: number[], board: []) => {
+    if (board.length < 1) {
+        return [];
     }
 
-    const dimensions = determineColumnByRow(level);
     const columns = dimensions[0];
     const rows = dimensions[1];
     const cellCount = board.length;
-    const dataBreaks = [];
+    const dataBreaks: [][] = [];
 
     for (let i = 0; i < rows; i++) {
         const start = i * columns;
@@ -34,47 +27,68 @@ function Board({ game, layBoard }) {
         dataBreaks.push(board.slice(start, end));
     }
 
+    return dataBreaks;
+};
+
+function Board({
+    level, board, inGame,
+    isComplete, isTimeOut, layoutBoard
+}) {
+    console.log('Starting', inGame);
+
+    if (!inGame && !(isComplete || isTimeOut)) {
+        console.log('lay board');
+        layoutBoard();
+        // return null;
+    }
+    const dimensions = determineColumnByRow(level);
+    const columns = dimensions[0];
+
+    const dataBreaks = groupData(level, dimensions, board);
+
+    const displayBoard = () => dataBreaks.map((data, i) => (
+        <BoardRow key={i} rowCount={columns} data={data} />
+    ));
+
+    console.log('isComplete > ', isComplete);
+    const showBoard = !isComplete && !isTimeOut;
+
     return (
         <View style={styles.container}>
             <Scoreboard />
-            <View style={styles.cellContainer}
-                contentContainerStyle={styles.cellContainer}>
-                {dataBreaks.map((data, i) => {
-                    return (
-                        <BoardRow key={i} rowCount={columns} data={data} />
-                    )
-                })}
-            </View>
+
+            {showBoard && (
+                <View style={styles.cellContainer}>
+                    {displayBoard()}
+                </View>
+            )}
+
+            {!inGame && !showBoard && <GameOver />}
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        marginTop: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginHorizontal: 10
-    },
-    contentContainerStyle: {
-    },
-    cellContainer: {
-        flex: 1,
-        width: '100%',
-        marginBottom: 10
-    },
-    flexOne: {
-        flex: 1,
-        width: '100%'
-    }
-});
+Board.propTypes = {
+    level: PropTypes.number.isRequired,
+    board: PropTypes.arrayOf(
+        PropTypes.object
+    ).isRequired,
+    isComplete: PropTypes.bool.isRequired,
+    inGame: PropTypes.bool.isRequired,
+    isTimeOut: PropTypes.bool.isRequired,
+    layoutBoard: PropTypes.func.isRequired
+};
 
-const mapDispatchToProps = { layBoard };
+const mapDispatchToProps = { layoutBoard: layBoard };
 
-const mapStateToProps = (state) => ({
-    game: state.game
-});
+const mapStateToProps = (state: any) => {
+    const {
+        level, board, isComplete, inGame, isTimeOut
+    } = state.game;
+
+    return {
+        level, board, isComplete, inGame, isTimeOut
+    };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);
