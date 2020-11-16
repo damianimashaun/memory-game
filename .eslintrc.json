@@ -38,7 +38,7 @@
             }
         ],
         "comma-dangle": "off",
-        "allowForLoopAfterthoughts": 1,
+        "no-plusplus": "off",
         "react/jsx-indent" : ["error", 4]
     },
     "settings": {
