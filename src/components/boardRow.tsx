@@ -16,14 +16,17 @@ const styles = StyleSheet.create({
 function BoardRow({ data, columnCount }) {
     const dataCount = data.length;
     const renderCell = (card: Card, i: number) => <GameCell key={i} card={card} />;
+    let displayData;
 
     if (dataCount < columnCount) {
-        PadItemArray(data, columnCount);
+        displayData = PadItemArray(data, columnCount);
+    } else {
+        displayData = data;
     }
 
     return (
         <View style={styles.rowContainer}>
-            {data.map((card: Card, i: number) => renderCell(card, i))}
+            {displayData.map((card: Card, i: number) => renderCell(card, i))}
         </View>
     );
 }
