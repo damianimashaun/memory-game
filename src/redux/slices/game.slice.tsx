@@ -95,7 +95,9 @@ export const gameSlice = createSlice({
             card.isOpen = true;
         },
         toggleButton: (state, action) => {
-            const { play, board, level, score } = state;
+            const {
+                play, board, level, score
+            } = state;
 
             const setPlayState = (up = false, face = negativeOne) => {
                 state.play.oneUp = up;
@@ -172,7 +174,6 @@ export const saveGameAsync = () => async (dispatch, getState) => {
 
 export const loadGameAsync = () => async (dispatch) => {
     const gameState = await ReadState();
-    console.log('GState > ', gameState);
 
     if (gameState === null) {
         dispatch(startGame());

@@ -1,19 +1,31 @@
 import React, { useEffect, useRef } from 'react';
 import { AppState, View } from 'react-native';
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux';
 import { DetermineColumnByRow, GroupData } from '../redux/slices/utility/grouper';
-import { loadGameAsync, saveGameAsync } from '../redux/slices/game.slice';
+import { loadGameAsync, saveGameAsync, startGame } from '../redux/slices/game.slice';
 import BoardRow from './boardRow';
 import Scoreboard from './score';
 import styles from './board.styles';
 import GameOver from './gameOver';
+import { Card } from '../models/card';
+
+type boardTypes = {
+    game: {
+        level: number,
+        board: Card[],
+        isComplete: boolean,
+        inGame: boolean,
+        isTimeOut: boolean,
+    },
+    startGame: Function,
+    saveGame: Function
+};
 
 const stateActive = 'active';
 const changeListener = 'change';
 const inactiveRegex = /inactive|background/;
 
-function Board({ game, startGame, saveGame }) {
+function Board({ game, startGame, saveGame }: boardTypes) {
     const {
         level, board, inGame, isComplete, isTimeOut
     } = game;
@@ -21,9 +33,13 @@ function Board({ game, startGame, saveGame }) {
     const dimensions = DetermineColumnByRow(level);
     const dataBreaks = GroupData(dimensions, board);
 
-    const displayBoard = () => dataBreaks.map((data, i) => (
-        <BoardRow key={i} columnCount={dimensions[0]} data={data} />
-    ));
+    const displayBoard = () => (
+        <View style={styles.cellContainer}>
+            {dataBreaks.map((data, i) => (
+                <BoardRow key={i} columnCount={dimensions[0]} data={data} />
+            ))}
+        </View>
+    );
 
     const appState = useRef(AppState.currentState);
     const handleStateChange = async (nextAppState) => {
@@ -52,11 +68,7 @@ function Board({ game, startGame, saveGame }) {
         <View style={styles.container}>
             <Scoreboard />
 
-            {showBoard && (
-                <View style={styles.cellContainer}>
-                    {displayBoard()}
-                </View>
-            )}
+            {showBoard && displayBoard()}
 
             {!inGame && !showBoard && <GameOver />}
         </View>
@@ -71,20 +83,6 @@ const mapDispatchToProps = {
 const mapStateToProps = (state: any) => {
     const { game } = state;
     return { game };
-};
-
-Board.propTypes = {
-    game: PropTypes.shape({
-        level: PropTypes.number.isRequired,
-        board: PropTypes.arrayOf(
-            PropTypes.object
-        ).isRequired,
-        isComplete: PropTypes.bool.isRequired,
-        inGame: PropTypes.bool.isRequired,
-        isTimeOut: PropTypes.bool.isRequired,
-    }).isRequired,
-    startGame: PropTypes.func.isRequired,
-    saveGame: PropTypes.func.isRequired
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);

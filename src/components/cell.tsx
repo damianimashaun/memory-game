@@ -34,10 +34,6 @@ const styles = StyleSheet.create({
 
 function GameCell({ card, toggleButton }: cellProps) {
     const hasCard = card !== undefined;
-    const backgroundStyle = {
-        backgroundColor: card.isOpen ? 'default' : ''
-    };
-
     const renderFace = () => (
         <Text style={styles.centeredText}>
             {card.faceValue}
@@ -51,14 +47,20 @@ function GameCell({ card, toggleButton }: cellProps) {
         />
     );
 
-    const display = () => (
-        <View
-            style={[styles.innerCell, backgroundStyle]}
-        >
-            {card.isOpen && renderFace()}
-            {!card.isOpen && renderButton()}
-        </View>
-    );
+    const display = () => {
+        const backgroundStyle = {
+            backgroundColor: card.isOpen ? 'default' : ''
+        };
+
+        return (
+            <View
+                style={[styles.innerCell, backgroundStyle]}
+            >
+                {card.isOpen && renderFace()}
+                {!card.isOpen && renderButton()}
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>

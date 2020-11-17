@@ -19,7 +19,9 @@ class Timer extends React.Component {
     intervalId = 0;
 
     componentDidMount = () => {
-        this.start();
+        if (this.props.inGame) {
+            this.start();
+        }
     }
 
     componentDidUpdate = (prevPops) => {
