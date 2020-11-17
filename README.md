@@ -1,11 +1,11 @@
 # Memory Game
 
-## Setup after clone
+#### Setup after clone
 `npm i`
 
 `react-native run-android`
 
-### Todo
+#### Todo
 
 Use background timer
 
