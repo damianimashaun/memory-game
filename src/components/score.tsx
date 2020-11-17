@@ -1,42 +1,45 @@
-import React from "react";
+import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text } from "react-native";
+import { View, Text } from 'react-native';
 import Timer from '../components/timer';
+import styles from './score.styles';
+
+type scoreProps = {
+    level: number,
+    score: number
+};
 
 const titleString = 'Memory Game';
 const levelString = 'Level';
 const scoreString = 'Score';
 const timeLeftString = 'Time Left';
 
-function Scoreboard({ level, score }) {
+function Scoreboard({ level, score }: scoreProps) {
+    const renderBoardItem = (title: string, text: number) => (
+        <View style={styles.flexOne}>
+            <Text style={styles.innerTitle}>
+                {title}
+            </Text>
+            <Text style={styles.innerValue}>
+                {text}
+            </Text>
+        </View>
+    );
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
                 {titleString}
             </Text>
             <View style={styles.halfViewContainer}>
-                <View style={styles.halfView}>
-                    <Text style={styles.innerTitle}>
-                        {levelString}
-                    </Text>
-                    <Text style={styles.innerValue}>
-                        {level}
-                    </Text>
-                </View>
-                <View style={styles.halfView}>
-                    <Text style={styles.innerTitle}>
-                        {scoreString}
-                    </Text>
-                    <Text style={styles.innerValue}>
-                        {score}
-                    </Text>
-                </View>
+                {renderBoardItem(levelString, level)}
+                {renderBoardItem(scoreString, score)}
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={styles.flexOne}>
                 <Text style={styles.lowerTitle}>
                     {timeLeftString}
                 </Text>
-                <View style={{ flex: 1 }}>
+                <View style={styles.flexOne}>
                     <Timer />
                 </View>
             </View>
@@ -44,50 +47,7 @@ function Scoreboard({ level, score }) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-        minHeight: 150,
-        width: '100%'
-    },
-    title: {
-        flex: 1,
-        color: '#00c',
-        fontSize: 20,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    lowerTitle: {
-        flex: 1,
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    halfViewContainer: {
-        flexDirection: 'row',
-        flex: 1
-    },
-    halfView: {
-        flex: 1
-    },
-    innerTitle: {
-        flex: 1,
-        width: '100%',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: 16
-    },
-    innerValue: {
-        flex: 1,
-        color: 'orange',
-        width: '100%',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: 16
-    }
-});
-
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
     const { level, score } = state.game;
     return { level, score };
 };
