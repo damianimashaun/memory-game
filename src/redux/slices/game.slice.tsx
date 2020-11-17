@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Card } from '../../models/card';
-import { ReadState, SaveState, Clear, ClearState } from './utility/dataStore';
-import { getShuffledArray } from './utility/shuffle';
-import formatTime from './utility/timeFunctions';
+import { ReadState, SaveState, ClearState } from './utility/dataStore';
+import GetShuffledArray from './utility/shuffle';
+import FormatTime from './utility/timeFunctions';
 
 const emptyBoard: Card[] = [];
 const negativeOne = -1;
@@ -29,7 +29,7 @@ const defaultState = (level: number) => ({
 });
 
 const makeCells = (level: number) => {
-    const values = getShuffledArray(level);
+    const values = GetShuffledArray(level);
     let index = 0;
 
     return values.map((i) => {
@@ -150,15 +150,16 @@ export const gameSlice = createSlice({
             setPlayState();
         },
         tick: (state) => {
-            const milliseconds = +state.milliseconds - 1;
-            if (milliseconds === 0) {
+            const milliseconds = +state.milliseconds - 100;
+
+            if (milliseconds < 0) {
                 state.isTimeOut = true;
                 state.inGame = false;
                 return;
             }
 
             state.milliseconds = milliseconds;
-            state.time = formatTime(milliseconds);
+            state.time = FormatTime(milliseconds);
         }
     }
 });
@@ -167,12 +168,12 @@ export const {
     startGame, loadGame, toggleButton, flipCell, tick, restartGame
 } = gameSlice.actions;
 
-export const toggleButtonAsync = (id) => (dispatch) => {
+export const toggleButtonAsync = (id) => async (dispatch) => {
     dispatch(flipCell(id));
 
     setTimeout(() => {
         dispatch(toggleButton(id));
-    }, 200);
+    }, 150);
 };
 
 export const saveGameAsync = () => async (dispatch, getState) => {

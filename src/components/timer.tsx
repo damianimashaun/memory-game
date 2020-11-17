@@ -40,7 +40,7 @@ class Timer extends React.Component {
     start = () => {
         this.intervalId = setInterval(() => {
             this.props.tick();
-        }, 1);
+        }, 1000);
     }
 
     stop = () => {

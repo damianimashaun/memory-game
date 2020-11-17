@@ -1,4 +1,4 @@
-export default function formatTime(ms: number) {
+function FormatTime(ms: number) {
     if (ms < 100) {
         return '0:00';
     }
@@ -9,3 +9,5 @@ export default function formatTime(ms: number) {
     const secondsPart = seconds < 10 ? `0${seconds}` : seconds;
     return `${mins}:${secondsPart}`;
 }
+
+export default FormatTime;
