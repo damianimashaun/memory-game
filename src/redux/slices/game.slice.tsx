@@ -64,7 +64,7 @@ const setStartCommon = (
 
 export const gameSlice = createSlice({
     name: 'game',
-    initialState: defaultState(10),
+    initialState: defaultState(1),
     reducers: {
         startGame: (state) => {
             const { level } = state;
