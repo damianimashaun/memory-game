@@ -1,32 +1,14 @@
 import * as React from 'react';
 import {
     StyleSheet, View, Text, TouchableOpacity
-} from "react-native";
+} from 'react-native';
 import { connect } from 'react-redux'
-import { Card } from "../models/card";
+import { Card } from '../models/card';
 import { toggleButtonAsync } from '../redux/slices/game.slice';
 
-function GameCell({ card, toggleButtonAsync }) {
-    const hasCard = card !== undefined;
-
-    return (
-        <View style={styles.container}>
-            {hasCard &&
-                (
-                    <View style={[styles.innerCell, {
-                        backgroundColor: card.isOpen ? 'default' : ''
-                    }]}>
-                        {card.isOpen && <Text style={styles.centeredText}>
-                            {card.faceValue}
-                        </Text>}
-                        {!card.isOpen &&
-                            <TouchableOpacity
-                                onPress={() => toggleButtonAsync(card.id)}
-                                style={styles.centeredButton} />}
-                    </View>
-                )}
-        </View>
-    );
+type cellProps = {
+    card: Card,
+    toggleButton: Function
 }
 
 const styles = StyleSheet.create({
@@ -50,12 +32,44 @@ const styles = StyleSheet.create({
     }
 });
 
+function GameCell({ card, toggleButton }: cellProps) {
+    const hasCard = card !== undefined;
+    const backgroundStyle = {
+        backgroundColor: card.isOpen ? 'default' : ''
+    };
 
+    const renderFace = () => (
+        <Text style={styles.centeredText}>
+            {card.faceValue}
+        </Text>
+    );
+
+    const renderButton = () => (
+        <TouchableOpacity
+            onPress={() => toggleButton(card.id)}
+            style={styles.centeredButton}
+        />
+    );
+
+    const display = () => (
+        <View
+            style={[styles.innerCell, backgroundStyle]}
+        >
+            {card.isOpen && renderFace()}
+            {!card.isOpen && renderButton()}
+        </View>
+    );
+
+    return (
+        <View style={styles.container}>
+            {hasCard && display()}
+        </View>
+    );
+}
 const mapStateToProps = (state, ownProps) => ({
     card: ownProps.card
 });
 
-const mapDispatchToProps = { toggleButtonAsync };
+const mapDispatchToProps = { toggleButton: toggleButtonAsync };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameCell);
-

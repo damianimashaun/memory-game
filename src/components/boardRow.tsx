@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { Card } from '../models/card';
 import PadItemArray from '../redux/slices/utility/arrayPad';
 import GameCell from './cell';
