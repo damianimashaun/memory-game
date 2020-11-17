@@ -172,6 +172,7 @@ export const saveGameAsync = () => async (dispatch, getState) => {
 
 export const loadGameAsync = () => async (dispatch) => {
     const gameState = await ReadState();
+    console.log('GState > ', gameState);
 
     if (gameState === null) {
         dispatch(startGame());

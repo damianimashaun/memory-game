@@ -1,9 +1,35 @@
+import { Card } from '../../../models/card';
+
 function isSquare(i: number) {
     const squareRoot = Math.sqrt(i);
-    return Number.isInteger(squareRoot) && squareRoot * squareRoot === i;
+    return Number.isInteger(squareRoot)
+        && squareRoot ** 2 === i;
 }
 
-export default function determineColumnByRow(level: number) {
+function GroupData(dimensions: number[], board: Card[]) {
+    if (board.length < 1) {
+        return [];
+    }
+
+    const columns = dimensions[0];
+    const rows = dimensions[1];
+    const cellCount = board.length;
+    const dataBreaks: Card[][] = [];
+
+    for (let i = 0; i < rows; i++) {
+        const start = i * columns;
+        const fullEnd = start + columns;
+        const end = fullEnd > cellCount
+            ? cellCount
+            : fullEnd;
+
+        dataBreaks.push(board.slice(start, end));
+    }
+
+    return dataBreaks;
+}
+
+function DetermineColumnByRow(level: number) {
     const cards = (level + 1) * 2;
 
     if (isSquare(cards)) {
@@ -28,3 +54,5 @@ export default function determineColumnByRow(level: number) {
 
     return [columns, rows];
 }
+
+export { GroupData, DetermineColumnByRow };
