@@ -19,23 +19,19 @@ function Board({ game, startGame, saveGame }) {
     } = game;
 
     const dimensions = DetermineColumnByRow(level);
-    const columns = dimensions[0];
-
     const dataBreaks = GroupData(dimensions, board);
+
     const displayBoard = () => dataBreaks.map((data, i) => (
-        <BoardRow key={i} rowCount={columns} data={data} />
+        <BoardRow key={i} columnCount={dimensions[0]} data={data} />
     ));
 
     const appState = useRef(AppState.currentState);
     const handleStateChange = async (nextAppState) => {
-        if (appState.current === stateActive && nextAppState.match(inactiveRegex)) {
+        if (appState.current === stateActive
+            && nextAppState.match(inactiveRegex)) {
             await saveGame();
         }
     };
-
-    if (!inGame && !(isComplete || isTimeOut)) {
-        startGame();
-    }
 
     useEffect(() => {
         AppState.addEventListener(changeListener, handleStateChange);
@@ -45,6 +41,10 @@ function Board({ game, startGame, saveGame }) {
             saveGame();
         };
     }, []);
+
+    if (!inGame && !(isComplete || isTimeOut)) {
+        startGame();
+    }
 
     const showBoard = !isComplete && !isTimeOut;
 
@@ -63,6 +63,16 @@ function Board({ game, startGame, saveGame }) {
     );
 }
 
+const mapDispatchToProps = {
+    startGame: loadGameAsync,
+    saveGame: saveGameAsync
+};
+
+const mapStateToProps = (state: any) => {
+    const { game } = state;
+    return { game };
+};
+
 Board.propTypes = {
     game: PropTypes.shape({
         level: PropTypes.number.isRequired,
@@ -75,16 +85,6 @@ Board.propTypes = {
     }).isRequired,
     startGame: PropTypes.func.isRequired,
     saveGame: PropTypes.func.isRequired
-};
-
-const mapDispatchToProps = {
-    startGame: loadGameAsync,
-    saveGame: saveGameAsync
-};
-
-const mapStateToProps = (state: any) => {
-    const { game } = state;
-    return { game };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);
