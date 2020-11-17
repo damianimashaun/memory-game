@@ -18,14 +18,14 @@ const defaultPlayState = (max: number) => ({
 
 const defaultState = (level: number) => ({
     level,
-    score: 0, // 0,
+    score: 0,
     board: emptyBoard,
     inGame: false,
     play: defaultPlayState(level + 1),
-    isComplete: false, // false
+    isComplete: false,
     isTimeOut: false,
-    milliseconds: maxTime, // 1200,
-    time: ''
+    milliseconds: maxTime,
+    time: '5:00'
 });
 
 const makeCells = (level: number) => {
@@ -51,7 +51,7 @@ const makePlay = (state: any, level: number) => {
 
 const setStartCommon = (
     state: any, level = 1, score = 0, inGame = true, isComplete = false,
-    isTimeOut = false, milliseconds = maxTime, time = ''
+    isTimeOut = false, milliseconds = maxTime, time = '5:00'
 ) => {
     state.level = level;
     state.score = score;
@@ -78,9 +78,8 @@ export const gameSlice = createSlice({
         },
         loadGame: (state, action) => {
             const {
-                level, score, board, inGame,
-                play, isComplete, isTimeOut,
-                milliseconds, time
+                level, score, board, inGame, play,
+                isComplete, isTimeOut, milliseconds, time
             } = action.payload;
 
             setStartCommon(
@@ -109,7 +108,7 @@ export const gameSlice = createSlice({
             const progress = () => {
                 const nextLevel = level + 1;
 
-                if (nextLevel > 3) {
+                if (nextLevel > maxLevel) {
                     state.isComplete = true;
                     state.inGame = false;
                     return;

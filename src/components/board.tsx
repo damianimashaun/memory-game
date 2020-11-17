@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { AppState, View } from 'react-native';
 import { connect } from 'react-redux';
 import { DetermineColumnByRow, GroupData } from '../redux/slices/utility/grouper';
-import { loadGameAsync, saveGameAsync, startGame } from '../redux/slices/game.slice';
+import { loadGameAsync, saveGameAsync } from '../redux/slices/game.slice';
 import BoardRow from './boardRow';
 import Scoreboard from './score';
 import styles from './board.styles';
@@ -53,7 +53,6 @@ function Board({ game, startGame, saveGame }: boardTypes) {
         AppState.addEventListener(changeListener, handleStateChange);
 
         return () => {
-            console.log('unmounting...');
             saveGame();
         };
     }, []);

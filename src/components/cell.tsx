@@ -48,8 +48,12 @@ function GameCell({ card, toggleButton }: cellProps) {
     );
 
     const display = () => {
+        const stateColor = card.isMatched ? 'green' : 'black';
+
         const backgroundStyle = {
-            backgroundColor: card.isOpen ? 'default' : ''
+            backgroundColor: card.isOpen ? 'default' : '',
+            borderColor: stateColor,
+            color: stateColor
         };
 
         return (
