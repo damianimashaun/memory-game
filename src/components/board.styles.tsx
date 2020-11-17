@@ -9,16 +9,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginHorizontal: 10
     },
-    contentContainerStyle: {
-    },
     cellContainer: {
         flex: 1,
         width: '100%',
         marginBottom: 10
-    },
-    flexOne: {
-        flex: 1,
-        width: '100%'
     }
 });
 
