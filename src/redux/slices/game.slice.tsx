@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { State } from "react-native-gesture-handler";
-import { Card } from "../../models/card";
-import { getShuffledArray } from "./utility/shuffle";
-import formatTime from "./utility/timeFunctions";
+import { createSlice } from '@reduxjs/toolkit';
+import { Card } from '../../models/card';
+import { ReadState, SaveState } from './utility/dataStore';
+import { getShuffledArray } from './utility/shuffle';
+import formatTime from './utility/timeFunctions';
 
 const emptyBoard: Card[] = [];
 const negativeOne = -1;
@@ -52,30 +52,46 @@ const progressState = (state: any, level: number) => {
 
 export const gameSlice = createSlice({
     name: 'game',
-    initialState: defaultState(1),
+    initialState: defaultState(10),
     reducers: {
-        restartGame: (state) => {
-            console.log('here and now');
-            state.level = 1;
-            state.score = 0;
-            state.isComplete = false;
-            state.isTimeOut = false;
-            state.milliseconds = maxTime;
-            state.time = '';
-            state.play = defaultPlayState(2);
-            state.board = makeCells(1);
-
-            state.inGame = true;
-        },
-        layBoard: (state) => {
+        startGame: (state) => {
             const { level } = state;
 
             state.board = makeCells(level);
             state.play = defaultPlayState(level + 1);
             state.inGame = true;
         },
+        restartGame: (state) => {
+            state.level = 1;
+            state.score = 0;
+            state.board = makeCells(1);
+            state.inGame = true;
+            state.play = defaultPlayState(2);
+            state.isComplete = false;
+            state.isTimeOut = false;
+            state.milliseconds = maxTime;
+            state.time = '';
+        },
+        loadGame: (state, action) => {
+            const {
+                level, score, board, inGame,
+                play, isComplete, isTimeOut,
+                milliseconds, time
+            } = action.payload;
+
+            state.level = level;
+            state.score = score;
+            state.board = board;
+            state.inGame = inGame;
+            state.play = play;
+            state.isComplete = isComplete;
+            state.isTimeOut = isTimeOut;
+            state.milliseconds = milliseconds;
+            state.time = time;
+        },
         flipCell: (state, action) => {
-            const card = state.board.find((item) => item.id === action.payload);
+            const cellId = action.payload;
+            const card = state.board.find((item) => item.id === cellId);
             card.isOpen = true;
         },
         toggleButton: (state, action) => {
@@ -139,7 +155,7 @@ export const gameSlice = createSlice({
 });
 
 export const {
-    layBoard, toggleButton, flipCell, tick, restartGame
+    startGame, loadGame, toggleButton, flipCell, tick, restartGame
 } = gameSlice.actions;
 
 export const toggleButtonAsync = (id) => (dispatch) => {
@@ -148,6 +164,20 @@ export const toggleButtonAsync = (id) => (dispatch) => {
     setTimeout(() => {
         dispatch(toggleButton(id));
     }, 200);
+};
+
+export const saveGameAsync = () => async (dispatch, getState) => {
+    await SaveState(getState().game);
+};
+
+export const loadGameAsync = () => async (dispatch) => {
+    const gameState = await ReadState();
+
+    if (gameState === null) {
+        dispatch(startGame());
+    } else {
+        dispatch(loadGame(gameState));
+    }
 };
 
 export default gameSlice.reducer;

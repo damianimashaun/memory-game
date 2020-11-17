@@ -1,13 +1,16 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { Ref, useEffect, useRef } from 'react';
+import { AppState, View } from 'react-native';
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import determineColumnByRow from '../redux/slices/utility/grouper';
-import { layBoard } from '../redux/slices/game.slice';
+import { loadGameAsync, saveGameAsync } from '../redux/slices/game.slice';
 import BoardRow from './boardRow';
 import Scoreboard from './score';
 import styles from './board.styles';
 import GameOver from './gameOver';
+
+const stateActive = 'active';
+const inactiveRegex = /inactive|background/;
 
 const groupData = (level: number, dimensions: number[], board: []) => {
     if (board.length < 1) {
@@ -30,17 +33,36 @@ const groupData = (level: number, dimensions: number[], board: []) => {
     return dataBreaks;
 };
 
-function Board({
-    level, board, inGame,
-    isComplete, isTimeOut, layoutBoard
-}) {
-    console.log('Starting', inGame);
+function Board({ game, startGame, saveGame }) {
+    // console.log('Game > ', game);
+    const appState = useRef(AppState.currentState);
+
+    const handleStateChange = async (nextAppState) => {
+        if (appState.current === stateActive && nextAppState.match(inactiveRegex)) {
+            await saveGame();
+        }
+    };
+
+    const {
+        level, board, inGame, isComplete, isTimeOut
+    } = game;
 
     if (!inGame && !(isComplete || isTimeOut)) {
-        console.log('lay board');
-        layoutBoard();
+        startGame();
         // return null;
     }
+
+    useEffect(() => {
+        // return (async () => {
+        //     console.log('Exiting')
+        //     await saveGame(game);
+        // })
+        AppState.addEventListener('change', handleStateChange);
+
+        return () => console.log('unmounting...');
+    }, []);
+
+
     const dimensions = determineColumnByRow(level);
     const columns = dimensions[0];
 
@@ -50,7 +72,6 @@ function Board({
         <BoardRow key={i} rowCount={columns} data={data} />
     ));
 
-    console.log('isComplete > ', isComplete);
     const showBoard = !isComplete && !isTimeOut;
 
     return (
@@ -68,27 +89,25 @@ function Board({
     );
 }
 
-Board.propTypes = {
-    level: PropTypes.number.isRequired,
-    board: PropTypes.arrayOf(
-        PropTypes.object
-    ).isRequired,
-    isComplete: PropTypes.bool.isRequired,
-    inGame: PropTypes.bool.isRequired,
-    isTimeOut: PropTypes.bool.isRequired,
-    layoutBoard: PropTypes.func.isRequired
-};
+// Board.propTypes = {
+//     game: PropTypes.shape({
+//         level: PropTypes.number.isRequired,
+//         board: PropTypes.arrayOf(
+//             PropTypes.object
+//         ).isRequired,
+//         isComplete: PropTypes.bool.isRequired,
+//         inGame: PropTypes.bool.isRequired,
+//         isTimeOut: PropTypes.bool.isRequired,
+//     }).isRequired,
+//     layoutBoard: PropTypes.func.isRequired,
+//     saveGame: PropTypes.func.isRequired
+// };
 
-const mapDispatchToProps = { layoutBoard: layBoard };
+const mapDispatchToProps = { startGame: loadGameAsync, saveGame: saveGameAsync };
 
 const mapStateToProps = (state: any) => {
-    const {
-        level, board, isComplete, inGame, isTimeOut
-    } = state.game;
-
-    return {
-        level, board, isComplete, inGame, isTimeOut
-    };
+    const { game } = state;
+    return { game };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);

@@ -12,7 +12,6 @@ class Timer extends Component {
 
     componentDidUpdate = (prevPops) => {
         const { inGame, isComplete, isTimeOut } = this.props;
-        console.log('> ', inGame, isComplete, isTimeOut);
         const gameStarted = !prevPops.inGame && inGame;
         const gameComplete = !prevPops.isComplete && isComplete;
         const timeOut = !prevPops.isTimeout && isTimeOut;
