@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
     StyleSheet, View, Text, TouchableOpacity
 } from 'react-native';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { Card } from '../models/card';
 import { toggleButtonAsync } from '../redux/slices/game.slice';
 
