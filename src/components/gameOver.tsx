@@ -5,10 +5,15 @@ import {
 import { connect } from 'react-redux'
 import { restartGame } from '../redux/slices/game.slice';
 
+type gameOverProps = {
+    isTimeOut: Boolean,
+    score: Number,
+    reset: Function
+};
+
 const gameOverString = 'Game Over';
 const gameCompleteString = 'Game Complete';
 const tapToRestartString = 'Play Again';
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -33,7 +38,7 @@ const styles = StyleSheet.create({
     }
 });
 
-function GameOver({ isTimeOut, score, restartGame }) {
+function GameOver({ isTimeOut, score, reset }: gameOverProps) {
     const title = isTimeOut ? gameOverString : gameCompleteString;
 
     return (
@@ -47,14 +52,14 @@ function GameOver({ isTimeOut, score, restartGame }) {
             <Button
                 title={tapToRestartString}
                 onPress={() => {
-                    restartGame();
+                    reset();
                 }}
             />
         </View>
     );
 }
 
-const mapDispatchToProps = { restartGame };
+const mapDispatchToProps = { reset: restartGame };
 
 const mapStateToProps = (state: any) => {
     const { isTimeOut, isComplete, score } = state.game;
