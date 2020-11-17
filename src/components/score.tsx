@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import Timer from '../components/timer';
 import styles from './score.styles';
 
-type scoreProps = {
+type scoreBoardProps = {
     level: number,
     score: number
 };
@@ -14,7 +14,7 @@ const levelString = 'Level';
 const scoreString = 'Score';
 const timeLeftString = 'Time Left';
 
-function Scoreboard({ level, score }: scoreProps) {
+function Scoreboard({ level, score }: scoreBoardProps) {
     const renderBoardItem = (title: string, text: number) => (
         <View style={styles.flexOne}>
             <Text style={styles.innerTitle}>

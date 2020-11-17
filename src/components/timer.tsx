@@ -1,9 +1,21 @@
-import React, { Component } from "react"
-import { View, Text, StyleSheet } from "react-native"
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { tick } from '../redux/slices/game.slice';
 
-class Timer extends Component {
+const styles = StyleSheet.create({
+    flexOne: {
+        flex: 1
+    },
+    text: {
+        textAlign: 'center',
+        color: 'orange',
+        fontWeight: 'bold'
+    }
+});
+
+class Timer extends React.Component {
     intervalId = 0;
 
     componentDidMount = () => {
@@ -46,16 +58,13 @@ class Timer extends Component {
     )
 }
 
-const styles = StyleSheet.create({
-    flexOne: {
-        flex: 1
-    },
-    text: {
-        textAlign: 'center',
-        color: 'orange',
-        fontWeight: 'bold'
-    }
-});
+Timer.propTypes = {
+    inGame: PropTypes.bool.isRequired,
+    isComplete: PropTypes.bool.isRequired,
+    isTimeOut: PropTypes.bool.isRequired,
+    time: PropTypes.string.isRequired,
+    tick: PropTypes.func.isRequired
+};
 
 const mapDispatchToProps = { tick };
 
