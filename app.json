@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "vedantu",
-    "slug": "vedantu",
+    "name": "mem game",
+    "slug": "mem game",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,14 +18,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dami.vedantu"
+      "bundleIdentifier": "com.dami.memorygame"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.dami.vedantu"
+      "package": "com.dami.memorygame"
     },
     "web": {
       "favicon": "./assets/favicon.png"
