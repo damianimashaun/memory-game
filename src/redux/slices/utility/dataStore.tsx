@@ -22,4 +22,12 @@ async function ReadState() {
     }
 }
 
-export { SaveState, ReadState };
+async function ClearState() {
+    try {
+        await AsyncStorage.removeItem(stateSaveKey);
+    } catch (e) {
+        return null;
+    }
+}
+
+export { SaveState, ReadState, ClearState };

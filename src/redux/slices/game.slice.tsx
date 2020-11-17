@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Card } from '../../models/card';
-import { ReadState, SaveState } from './utility/dataStore';
+import { ReadState, SaveState, Clear, ClearState } from './utility/dataStore';
 import { getShuffledArray } from './utility/shuffle';
 import formatTime from './utility/timeFunctions';
 
@@ -44,10 +44,22 @@ const makeCells = (level: number) => {
     });
 };
 
-const progressState = (state: any, level: number) => {
-    state.level = level;
+const makePlay = (state: any, level: number) => {
     state.board = makeCells(level);
     state.play = defaultPlayState(level + 1);
+};
+
+const setStartCommon = (
+    state: any, level = 1, score = 0, inGame = true, isComplete = false,
+    isTimeOut = false, milliseconds = maxTime, time = ''
+) => {
+    state.level = level;
+    state.score = score;
+    state.inGame = inGame;
+    state.isComplete = isComplete;
+    state.isTimeOut = isTimeOut;
+    state.milliseconds = milliseconds;
+    state.time = time;
 };
 
 export const gameSlice = createSlice({
@@ -56,21 +68,13 @@ export const gameSlice = createSlice({
     reducers: {
         startGame: (state) => {
             const { level } = state;
-
-            state.board = makeCells(level);
-            state.play = defaultPlayState(level + 1);
+            makePlay(state, level);
             state.inGame = true;
         },
         restartGame: (state) => {
-            state.level = 1;
-            state.score = 0;
-            state.board = makeCells(1);
-            state.inGame = true;
-            state.play = defaultPlayState(2);
-            state.isComplete = false;
-            state.isTimeOut = false;
-            state.milliseconds = maxTime;
-            state.time = '';
+            setStartCommon(state);
+            ClearState();
+            makePlay(state, 1);
         },
         loadGame: (state, action) => {
             const {
@@ -79,15 +83,13 @@ export const gameSlice = createSlice({
                 milliseconds, time
             } = action.payload;
 
-            state.level = level;
-            state.score = score;
+            setStartCommon(
+                state, level, score, inGame, isComplete,
+                isTimeOut, milliseconds, time
+            );
+
             state.board = board;
-            state.inGame = inGame;
             state.play = play;
-            state.isComplete = isComplete;
-            state.isTimeOut = isTimeOut;
-            state.milliseconds = milliseconds;
-            state.time = time;
         },
         flipCell: (state, action) => {
             const cellId = action.payload;
@@ -104,15 +106,17 @@ export const gameSlice = createSlice({
                 state.play.currentFace = face;
             };
 
-            const progressLevel = () => {
-                const newLevel = level + 1;
+            const progress = () => {
+                const nextLevel = level + 1;
 
-                if (newLevel > 3) {
+                if (nextLevel > 3) {
                     state.isComplete = true;
                     state.inGame = false;
-                } else {
-                    progressState(state, newLevel);
+                    return;
                 }
+
+                state.level = nextLevel;
+                makePlay(state, nextLevel);
             };
 
             const card = board.find((item) => item.id === action.payload);
@@ -125,13 +129,16 @@ export const gameSlice = createSlice({
             const openCard = board.find((item) => item.id === play.currentFace);
 
             if (openCard.faceValue === card.faceValue) {
+                openCard.isMatched = true;
+                card.isMatched = true;
+
                 const matches = ++play.matches;
 
                 setPlayState();
                 state.score = score + (level * 10);
                 state.play.matches = matches;
                 if (matches === play.max) {
-                    progressLevel();
+                    progress();
                 }
 
                 return;
